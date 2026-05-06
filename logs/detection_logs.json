@@ -1,0 +1,29 @@
+[
+  {
+    "id": 3,
+    "type": "url",
+    "input": "http://paypal-login-security123.xyz",
+    "verdict": "phishing",
+    "risk_score": 76,
+    "threat_level": "CRITICAL",
+    "timestamp": "2026-05-06T20:39:52.572754Z"
+  },
+  {
+    "id": 2,
+    "type": "email",
+    "input": "Subject: URGENT! Your Bank Account Will Be Suspended\n\nDear Customer,\n\nWe detected suspicious activity on your account. Your online banking access will be permanently suspended within 24 hours unless y\u2026",
+    "verdict": "phishing",
+    "risk_score": 86.8,
+    "threat_level": "CRITICAL",
+    "timestamp": "2026-05-06T20:39:32.224215Z"
+  },
+  {
+    "id": 1,
+    "type": "email",
+    "input": "Subject: University Assignment Submission Confirmation\n\nDear Mohamed,\n\nYour assignment for Introduction to Cybersecurity has been successfully submitted through the university portal.\n\nSubmission Time\u2026",
+    "verdict": "legitimate",
+    "risk_score": 14.8,
+    "threat_level": "SAFE",
+    "timestamp": "2026-05-06T20:39:06.538154Z"
+  }
+]

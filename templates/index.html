@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard AI — Phishing Detection System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+<!-- ═══ Animated Background ═══ -->
+<div class="bg-grid"></div>
+<div class="scanline"></div>
+
+<!-- ═══ Header ═══ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">PHISH<span class="accent">GUARD</span> <span class="logo-ai">AI</span></span>
+    </div>
+    <nav class="nav-pills">
+      <button class="nav-pill active" data-tab="scan">SCAN</button>
+      <button class="nav-pill" data-tab="history">HISTORY</button>
+      <button class="nav-pill" data-tab="about">ABOUT</button>
+    </nav>
+    <div class="status-bar">
+      <span class="status-dot"></span>
+      <span class="status-text">SYSTEM ONLINE</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ Main Content ═══ -->
+<main class="container">
+
+  <!-- ── Stats Cards ── -->
+  <section class="stats-row" id="statsRow">
+    <div class="stat-card" id="statTotal">
+      <div class="stat-label">TOTAL SCANS</div>
+      <div class="stat-value" id="totalScans">0</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:100%;background:var(--accent-blue)"></div></div>
+    </div>
+    <div class="stat-card threat">
+      <div class="stat-label">THREATS DETECTED</div>
+      <div class="stat-value" id="threatCount">0</div>
+      <div class="stat-bar"><div class="stat-bar-fill threat" id="threatBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card safe">
+      <div class="stat-label">CLEAN</div>
+      <div class="stat-value" id="cleanCount">0</div>
+      <div class="stat-bar"><div class="stat-bar-fill safe" id="cleanBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">AVG RISK SCORE</div>
+      <div class="stat-value" id="avgRisk">0%</div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="avgRiskBar" style="width:0%;background:var(--accent-orange)"></div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TAB: SCAN                                      -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="tab-content active" id="tab-scan">
+
+    <div class="scan-grid">
+
+      <!-- ── Email Scanner ── -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">✉</span>
+          <h2>EMAIL ANALYSIS</h2>
+          <span class="panel-badge">NLP + ML</span>
+        </div>
+        <div class="panel-body">
+          <label class="input-label">PASTE EMAIL CONTENT</label>
+          <textarea
+            id="emailInput"
+            class="cyber-textarea"
+            placeholder="Paste the email text here — headers, body, or full raw email…"
+            rows="8"
+          ></textarea>
+          <div class="input-meta" id="emailMeta">0 / 10,000 characters</div>
+          <button class="btn-scan" id="btnScanEmail" onclick="scanEmail()">
+            <span class="btn-icon">⬡</span> ANALYZE EMAIL
+          </button>
+        </div>
+      </div>
+
+      <!-- ── URL Scanner ── -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">⛓</span>
+          <h2>URL ANALYSIS</h2>
+          <span class="panel-badge">HEURISTIC</span>
+        </div>
+        <div class="panel-body">
+          <label class="input-label">ENTER URL TO INSPECT</label>
+          <input
+            id="urlInput"
+            class="cyber-input"
+            type="text"
+            placeholder="https://suspicious-link.example.com/login"
+          />
+          <div class="url-examples">
+            <span class="eg-label">TRY:</span>
+            <button class="eg-btn" onclick="fillUrl('http://192.168.1.1/paypal-login.php')">IP URL</button>
+            <button class="eg-btn" onclick="fillUrl('http://paypal-secure-login.tk/verify')">Fake Domain</button>
+            <button class="eg-btn" onclick="fillUrl('https://google.com')">Legit URL</button>
+          </div>
+          <button class="btn-scan url" id="btnScanUrl" onclick="scanUrl()">
+            <span class="btn-icon">⬡</span> ANALYZE URL
+          </button>
+
+          <!-- URL Feature Checklist (shown after scan) -->
+          <div id="urlChecklist" class="url-checklist hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Result Panel ── -->
+    <div id="resultPanel" class="result-panel hidden">
+      <div class="result-header">
+        <div class="result-verdict-wrap">
+          <span id="resultIcon" class="result-icon">⬡</span>
+          <div>
+            <div id="resultVerdict" class="result-verdict">ANALYZING…</div>
+            <div id="resultType" class="result-type">EMAIL SCAN</div>
+          </div>
+        </div>
+        <div class="result-scores">
+          <div class="score-block">
+            <div class="score-label">RISK SCORE</div>
+            <div class="score-value" id="riskScore">—</div>
+          </div>
+          <div class="score-block">
+            <div class="score-label">THREAT LEVEL</div>
+            <div class="score-value" id="threatLevel">—</div>
+          </div>
+          <div class="score-block" id="mlConfBlock">
+            <div class="score-label">ML CONFIDENCE</div>
+            <div class="score-value" id="mlConf">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Gauge -->
+      <div class="risk-gauge-wrap">
+        <svg viewBox="0 0 200 110" class="risk-gauge">
+          <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#1a2233" stroke-width="16"/>
+          <path id="gaugeFill" d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="#00f5ff" stroke-width="16"
+                stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round"/>
+          <text x="100" y="88" text-anchor="middle" class="gauge-text" id="gaugeText">0%</text>
+          <text x="22" y="115" class="gauge-label">SAFE</text>
+          <text x="155" y="115" class="gauge-label">DANGER</text>
+        </svg>
+      </div>
+
+      <!-- Recommendation -->
+      <div class="recommendation" id="recommendation"></div>
+
+      <!-- Email-specific: Highlighted text + Feature tags -->
+      <div id="emailDetails" class="email-details hidden">
+        <h3 class="detail-title">⬡ SUSPICIOUS KEYWORDS DETECTED</h3>
+        <div id="keywordTags" class="keyword-tags"></div>
+        <h3 class="detail-title" style="margin-top:1.5rem">⬡ EMAIL ANALYSIS</h3>
+        <div id="highlightedText" class="highlighted-text"></div>
+      </div>
+
+      <!-- URL-specific: Findings list -->
+      <div id="urlDetails" class="url-details hidden">
+        <h3 class="detail-title">⬡ SECURITY FINDINGS</h3>
+        <div id="urlFindings" class="findings-list"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TAB: HISTORY                                   -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="tab-content hidden" id="tab-history">
+    <div class="panel full-width">
+      <div class="panel-header">
+        <span class="panel-icon">◈</span>
+        <h2>DETECTION HISTORY</h2>
+        <button class="btn-export" onclick="exportLogs()">⬇ EXPORT CSV</button>
+      </div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <table class="cyber-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>TYPE</th>
+                <th>INPUT (TRUNCATED)</th>
+                <th>VERDICT</th>
+                <th>RISK</th>
+                <th>THREAT</th>
+                <th>TIMESTAMP</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="7" class="table-empty">No scans yet. Run a scan to see history.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TAB: ABOUT                                     -->
+  <!-- ══════════════════════════════════════════════ -->
+  <section class="tab-content hidden" id="tab-about">
+    <div class="about-grid">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-icon">⬡</span><h2>HOW IT WORKS</h2></div>
+        <div class="panel-body about-text">
+          <p><strong>PhishGuard AI</strong> uses a two-layer detection approach:</p>
+          <div class="about-step"><span class="step-num">01</span><div><strong>ML Classification</strong> — A Naive Bayes model trained on TF-IDF vectors extracted from thousands of phishing and legitimate emails. It learns statistical patterns of phishing language.</div></div>
+          <div class="about-step"><span class="step-num">02</span><div><strong>Heuristic Analysis</strong> — Rule-based feature extraction identifies urgency language, credential requests, brand impersonation, suspicious URLs, and aggressive formatting.</div></div>
+          <div class="about-step"><span class="step-num">03</span><div><strong>Blended Scoring</strong> — Final risk score = 70% ML confidence + 30% heuristic risk multiplier, giving a robust score even for novel phishing variations.</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-icon">⛓</span><h2>URL FEATURES ANALYZED</h2></div>
+        <div class="panel-body">
+          <div class="feature-grid">
+            <div class="feature-chip">HTTPS Protocol</div>
+            <div class="feature-chip">URL Length</div>
+            <div class="feature-chip">IP Address Host</div>
+            <div class="feature-chip">Subdomain Depth</div>
+            <div class="feature-chip">Free TLD (.tk/.ml)</div>
+            <div class="feature-chip">URL Shorteners</div>
+            <div class="feature-chip">Brand Spoofing</div>
+            <div class="feature-chip">@ Redirect Trick</div>
+            <div class="feature-chip">Domain Entropy</div>
+            <div class="feature-chip">Hyphen Abuse</div>
+            <div class="feature-chip">Suspicious Keywords</div>
+            <div class="feature-chip">Double Slash Redirect</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-icon">✉</span><h2>EMAIL FEATURES ANALYZED</h2></div>
+        <div class="panel-body">
+          <div class="feature-grid">
+            <div class="feature-chip">TF-IDF Vectors</div>
+            <div class="feature-chip">Phishing Keywords</div>
+            <div class="feature-chip">Urgency Language</div>
+            <div class="feature-chip">Credential Requests</div>
+            <div class="feature-chip">Financial Lures</div>
+            <div class="feature-chip">Brand Impersonation</div>
+            <div class="feature-chip">Embedded URLs</div>
+            <div class="feature-chip">Caps Ratio</div>
+            <div class="feature-chip">Exclamation Count</div>
+            <div class="feature-chip">IP URLs in Body</div>
+            <div class="feature-chip">Suspicious TLDs</div>
+            <div class="feature-chip">Bigram Patterns</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-icon">◈</span><h2>TECH STACK</h2></div>
+        <div class="panel-body">
+          <div class="tech-list">
+            <div class="tech-item"><span class="tech-cat">Backend</span> Python · Flask</div>
+            <div class="tech-item"><span class="tech-cat">ML</span> Scikit-learn · Naive Bayes · TF-IDF</div>
+            <div class="tech-item"><span class="tech-cat">Data</span> Pandas · NumPy</div>
+            <div class="tech-item"><span class="tech-cat">Frontend</span> HTML5 · CSS3 · Vanilla JS</div>
+            <div class="tech-item"><span class="tech-cat">Storage</span> JSON log file (SQLite-ready)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ Loading Overlay ═══ -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">ANALYZING THREAT…</div>
+    <div class="loading-sub">Running ML inference + heuristic scan</div>
+  </div>
+</div>
+
+<!-- ═══ Toast Notification ═══ -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
