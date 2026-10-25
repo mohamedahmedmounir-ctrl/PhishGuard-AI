@@ -9,6 +9,9 @@
 
 ---
 
+## 📋 Overview
+
+PhishGuard AI checks emails and links for phishing. Paste an email or a URL and it returns a verdict, a 0–100% risk score, a threat level and the reasons behind it, combining a machine-learning text classifier with 13 URL security checks. Everything runs locally: nothing you paste is sent to a third party.
 
 ---
 
@@ -65,7 +68,7 @@ PhishGuard-AI/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/PhishGuard-AI.git
+git clone https://github.com/mohamedahmedmounir-ctrl/PhishGuard-AI.git
 cd PhishGuard-AI
 ```
 
@@ -217,4 +220,4 @@ Verdict + Threat Level + Recommendation
 
 ---
 
-*Built for portfolio demonstration. Not intended as a production security system.*
+*An educational security project. It is not a production security system; the model is trained on a small starter dataset.*
