@@ -232,4 +232,10 @@ if __name__ == "__main__":
         train()
 
     print("[+] PhishGuard AI starting on http://localhost:5000")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Debug mode exposes an interactive console, so it is off unless PHISHGUARD_DEBUG=true,
+    # and the server listens on localhost only unless PHISHGUARD_HOST is set.
+    app.run(
+        debug=os.getenv("PHISHGUARD_DEBUG", "false").lower() == "true",
+        host=os.getenv("PHISHGUARD_HOST", "127.0.0.1"),
+        port=int(os.getenv("PORT", "5000")),
+    )
